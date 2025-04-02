@@ -49,16 +49,9 @@ public class Costume : MonoBehaviour
         }
     }
 
-    public void Update()
-    {
-        
-    }
-
     private void ResetCostume()
     {
-        sunflowerHat.SetActive(false);
-        bearHat.SetActive(false);
-        chefHat.SetActive(false);
+        OnCostumeChanged(0);
     }
 
     public void ActiveCostume(int costumeId)
