@@ -1,0 +1,132 @@
+﻿using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
+public class UIManager : MonoBehaviour
+{
+    public event Action<bool> PauseEvent;
+
+    public static UIManager Instance { get; private set; }
+
+    public bool isPaused = false;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 유지
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject); // 중복 생성 방지
+        }
+    }
+
+    private void Start()
+    {
+        SceneSetup();
+    }
+
+    private void Update()
+    {
+        // ESC 입력 감지는 게임 씬에서만 실행
+        if (SceneManager.GetActiveScene().name != "MainMenu" && Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePauseMenu();
+        }
+    }
+
+    // 씬이 변경될 때마다 실행되는 함수
+    private void SceneSetup()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+
+        // 씬이 바뀌었으므로, UI 요소를 다시 찾음
+        UIPanelManager.Instance.FindUIElements();
+
+        if (currentScene == "MainMenu")
+        {
+            SetupMainMenu();
+        }
+    }
+
+    #region Scene UI
+
+    // 메인 메뉴 전용 설정
+    private void SetupMainMenu()
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "Main")
+            {
+                // 이름이 일치하면 true로 설정 (여기서는 gameObject의 활성화를 예시로 듬)
+                obj.SetActive(true);
+                break; // 찾았으므로 더 이상 탐색하지 않음
+            }
+        }
+    }
+
+    // 퍼즈창 설정
+    private void PausePanel(bool isPaused)
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "Pause")
+            {
+                obj.SetActive(isPaused);
+                break; // 찾았으므로 더 이상 탐색하지 않음
+            }
+        }
+    }
+
+    // ESC 입력 시 Pause 창 열기/닫기
+    public void TogglePauseMenu()
+    {
+        isPaused = !isPaused;
+        PausePanel(isPaused);
+        Time.timeScale = isPaused ? 0 : 1; // 게임 멈춤/재개
+        var playerInput = FindObjectOfType<PlayerInput>();
+        playerInput.enabled = !isPaused;
+        PauseEvent?.Invoke(isPaused);
+    }
+
+    public void InteractUI(bool isInteracted)
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "Interact")
+            {
+                obj.SetActive(isInteracted);
+                break; // 찾았으므로 더 이상 탐색하지 않음
+            }
+        }
+    }
+
+    public void ScoreUI(int nowScore)
+    {
+        GameObject _scoreText = GameObject.Find("ScoreText"); // TMP_Text 컴포넌트 가져오기
+        TextMeshProUGUI scoreText = _scoreText.GetComponent<TextMeshProUGUI>();
+        if (scoreText != null)
+        {
+            scoreText.text = nowScore.ToString();  // 점수를 UI에 업데이트
+        }
+    }
+
+  
+
+    #endregion
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SceneSetup();
+    }
+}
