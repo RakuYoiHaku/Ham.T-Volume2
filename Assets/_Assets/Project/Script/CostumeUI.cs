@@ -45,10 +45,12 @@ public class CostumeUI : MonoBehaviour
         Instance.gameObject.SetActive(false);
     }
 
+    public Button costumeUI_btn;
     public Button sunflowerHat_btn; // 버튼 아이콘
     public Button bearHat_btn;
     public Button chefHat_btn;
     public Button quit_btn;
+    public Button reset_btn;
 
     [SerializeField] Sprite nullImage;
     [SerializeField] Sprite sunflowerHat_icon;
@@ -60,17 +62,29 @@ public class CostumeUI : MonoBehaviour
     private Costume costume;
     //private Dictionary<int, GameObject> costumeButtons = new Dictionary<int, GameObject>(); // 버튼 저장
 
-    private void Start()
+    private void Awake()
     {
         // 버튼 초기화
         ResetButtons();
+    }
+
+    private void Start()
+    {
+        ResetSkinButtons(); // 스킨버튼 초기화
 
         // 저장된 코스튬 불러와 적용
         int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume", 0);
-        ApplyCostume(savedCostumeId);
+        SelectCostume(savedCostumeId);
+
+        // 저장된 스킨 불러와 적용 (없다면 기본값 0)
+        int savedSkinId = PlayerPrefs.GetInt("SelectedSkined", 0);
+        SelectSkin(savedSkinId);
 
         quit_btn.interactable = true;
         quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseScene());
+
+        //리셋 버튼에 기능 추가
+        reset_btn.onClick.AddListener(ResetToDefault);
     }
 
     /// <summary>
@@ -83,6 +97,26 @@ public class CostumeUI : MonoBehaviour
         chefHat_btn.GetComponent<Image>().sprite = nullImage;
     }
 
+    /// <summary>
+    /// costumeId와 skinId를 0으로 리셋하는 함수
+    /// </summary>
+    private void ResetToDefault()
+    {
+        // 기본값(0)으로 변경
+        selectedCostumeId = 0;
+        selectedSkinId = 0;
+
+        // PlayerPrefs에 저장
+        PlayerPrefs.SetInt("SelectedCostume", selectedCostumeId);
+        PlayerPrefs.SetInt("SelectedSkined", selectedSkinId);
+        PlayerPrefs.Save();
+
+        // 기본 상태 적용
+        SelectCostume(0);
+        SelectSkin(0);
+
+        Debug.Log("코스튬과 스킨이 기본값(0)으로 리셋됨!");
+    }
 
     public void UpdateBtn(int costumeId)
     {
@@ -136,10 +170,47 @@ public class CostumeUI : MonoBehaviour
         Debug.Log($"코스튬 {selectedCostumeId} 저장 완료!");
     }
 
-    public void ApplyCostume(int costumeId)
+    #region SkinUI
+    // 스킨UI
+    public Button skinUI_btn;
+
+    [SerializeField] Button skin1_btn;
+    //[SerializeField] GameObject skinPanel; 
+
+    private SkinChange skinChange;
+
+    private int selectedSkinId = 0;
+
+    public void ResetSkinButtons()
     {
-        Costume.Instance.ActiveCostume(0);
-        Costume.Instance.ActiveCostume(costumeId);
+        reset_btn.interactable = true; 
     }
 
+    public void SkinButton(int skinId)
+    {
+        switch (skinId)
+        {
+            case 0:
+                reset_btn.onClick.RemoveAllListeners();
+                reset_btn.onClick.AddListener(() => SelectSkin(0));
+                break;
+            case 1:
+                skin1_btn.onClick.RemoveAllListeners();
+                skin1_btn.onClick.AddListener(() => SelectSkin(1));
+                Debug.Log("스킨1 변경");
+                break;
+        }
+    }
+
+    private void SelectSkin(int skinId)
+    {
+        SkinChange.ActiveSkined(0);  // 모든 코스튬 비활성화
+        SkinChange.ActiveSkined(skinId);
+        selectedSkinId = skinId;  // 현재 선택된 코스튬 저장 (임시)
+
+        PlayerPrefs.SetInt("SelectedSkined", selectedSkinId);
+        PlayerPrefs.Save();
+        Debug.Log($" {selectedSkinId} 저장 완료!");
+    }
+    #endregion
 }

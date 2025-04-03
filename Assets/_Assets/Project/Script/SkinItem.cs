@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.InputManagerEntry;
 
-public class CostumeItem : MonoBehaviour
+public class SkinItem : MonoBehaviour
 {
-    public int costumeId;
+    public int skinId;
 
     [SerializeField] private float rotationSpeed = 450f;
-    [SerializeField] GameObject costumitem;
+    [SerializeField] GameObject skinItem;
 
     Vector3 _origin;
 
@@ -34,8 +33,8 @@ public class CostumeItem : MonoBehaviour
             _isEating = true;
 
             //CostumeManager.Instance.AddCostume(costumeId);
-            
-            CostumeUI.Instance.UpdateBtn(costumeId);
+
+            CostumeUI.Instance.SkinButton(skinId);
             Debug.Log("UI갱신");
 
             Destroy(this.gameObject); // 아이템 제거
