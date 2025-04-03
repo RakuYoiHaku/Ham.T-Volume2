@@ -6,7 +6,7 @@ public class Seed : MonoBehaviour
 
     Vector3 _origin;
 
-    public bool _isEating = false;
+    public bool isEating;
 
     private void Awake()
     {
@@ -25,8 +25,8 @@ public class Seed : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            _isEating = true;
-            GameManager.Instance.SetScore(1);
+            isEating = true;
+            GameManager.Instance.SetScore(1f);
             seed.SetActive(false);
         }   
     }

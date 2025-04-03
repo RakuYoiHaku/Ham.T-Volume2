@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     private static GameManager m_instance; //싱글톤이 할당될 static 변수
 
-    private int score = 0;
+    public float score = 0;
 
     private void Awake()
     {
@@ -34,19 +34,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UIManager.Instance.ScoreUI(0);
+        //UIManager.Instance.ScoreUI(0);
     }
     //점수를 증가시킴
-    public void SetScore(int newScore)
+    public void SetScore(float newScore)
     {
         score += newScore;
-        UIManager.Instance.ScoreUI(score);
-        AudioManager.Instance.PlaySound(SoundType.Eat);
+        //UIManager.Instance.ScoreUI(score);
+        //AudioManager.Instance.PlaySound(SoundType.Eat);
     }
 
     //현재 점수를 반환함
-    public int GetScore()
+    public float GetScore()
     {
         return score; // 점수를 반환
     }
+
 }

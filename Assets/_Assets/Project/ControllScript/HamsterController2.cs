@@ -146,15 +146,16 @@ public class HamsterController2 : MonoBehaviour
 
     public void OnCollisionExit(Collision collision)
     {
-        if (collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Wall"))
+        if (collision.collider.CompareTag("Ground"))
         {
             inAir = true;
         }
-        if (collision.collider.CompareTag("Wall"))
+        else if (collision.collider.CompareTag("Wall"))
         {
             isNearObject = false;
             isClimbing = false;
             startClimbing = false;
+            inAir = true;
         }
         else if (collision.collider.CompareTag("Stop"))
         {

@@ -1,25 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class HamsterAnimator : MonoBehaviour
 {
     private Animator playerAnimator; //플레이어 캐릭터의 애니메이터
     private HamsterController2 hamsterController; // 플레이어 이동을 알려주는 컴포넌트
+    private Seed _seed;
 
-    //public bool isSprint; // Sprint 여부
-    //public bool isJumping; // 점프 여부
-    //public bool isClimbing;  // 벽을 타고 있는지 여부
-    //public bool isWalking; // Walk 여부
-    //public bool StopClimbing; // Climbing 종료 중
+    public int seedScore;
 
-    private void Awake()
+    public void Start()
+    {
+        GameObject seedObject = GameObject.Find("Seed");
+
+        if (seedObject != null) // null 체크
+        {
+            _seed = seedObject.GetComponent<Seed>(); // Seed 컴포넌트 가져오기
+        }
+    }
+    public void Awake()
     {
         playerAnimator = GetComponent<Animator>();
         hamsterController = GetComponent<HamsterController2>();
     }
 
-    private void Update()
+    public void Update()
     {
         if (hamsterController == null) return;
 
@@ -27,7 +34,7 @@ public class HamsterAnimator : MonoBehaviour
         HandleAnimations();
     }
 
-    private void HandleAnimations()
+    public void HandleAnimations()
     {
         #region  Jump
         // 점프 상태 (점프가 실행될 때)
@@ -103,16 +110,6 @@ public class HamsterAnimator : MonoBehaviour
         }
         #endregion
 
-        //// StartClimbing, StopClimbing 애니메이션은 한 번만 호출되도록 설정
-        //if (hamsterController.startClimbing && !playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("StartClimbing"))
-        //{
-        //    playerAnimator.SetTrigger("StartClimbing");
-        //}
-
-        //if (hamsterController.stopClimbing)
-        //{
-        //    playerAnimator.SetTrigger("StopClimbing");
-        //}
         #region InAir InAir만 켜져있을때 실행
         if (hamsterController.inAir)
         {
@@ -123,5 +120,19 @@ public class HamsterAnimator : MonoBehaviour
             playerAnimator.SetBool("InAir", false);
         }
         #endregion
+
+        if (_seed.isEating)
+        {
+            playerAnimator.SetBool("IsEating", true);
+            _seed.isEating = false;
+        }
+        else
+        {
+
+            playerAnimator.SetBool("IsEating", false);
+        }
+
+        playerAnimator.SetFloat("CollectSeed", GameManager.Instance.score);
+
     }
 }
