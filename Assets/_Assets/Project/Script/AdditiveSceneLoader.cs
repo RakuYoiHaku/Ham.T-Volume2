@@ -13,7 +13,6 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             if (_instance == null)
             {
-                // 씬에 추가된 코스튬 매니저를 찾는다.
                 _instance = FindObjectOfType<AdditiveSceneLoader>();
                 
 

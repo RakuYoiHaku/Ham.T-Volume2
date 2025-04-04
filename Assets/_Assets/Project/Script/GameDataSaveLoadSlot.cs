@@ -1,0 +1,94 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+
+namespace GameSave
+{
+    public class GameDataSaveLoadSlot : MonoBehaviour
+    {
+        [field: Header("이 슬롯의 고유한 번호")]
+        [field: SerializeField] public int slotId { private set; get; } = -1;
+
+        private static event Action<int> _saveLoadEvent;
+        public static GameDataSaveLoadSlot Instance { get; private set; }
+
+        [Space(3)]
+        [Header("슬롯의 버튼 (저장, 불러오기, 삭제)")]
+        [SerializeField] private Button save_btn;
+        [SerializeField] private Button load_btn;
+        [SerializeField] private Button remove_btn;
+
+        [SerializeField] private Transform playerPosition;
+
+        private void Awake()
+        {
+            UpdateSlot();
+        }
+
+        private void Start()
+        {
+            // 버튼 이벤트 등록은 한 번만 실행
+            save_btn.onClick.AddListener(CheckPointSave);
+            load_btn.onClick.AddListener(CheckPointLoad);
+            remove_btn.onClick.AddListener(CheckPointRemove);
+        }
+
+        public void UpdateSlot()
+        {
+            //슬롯 번호에 해당하는 세이브 파일이 있으면 버튼 활성화
+            bool hasSave = PlayerPrefs.HasKey($"PlayerPosX_{slotId}");
+
+            load_btn.interactable = hasSave;
+            remove_btn.interactable = hasSave;
+        }
+
+        public void CheckPointSave()
+        {
+            Vector3 pos = playerPosition.position;
+
+            PlayerPrefs.SetFloat($"PlayerPosX_{slotId}", pos.x);
+            PlayerPrefs.SetFloat($"PlayerPosY_{slotId}", pos.y);
+            PlayerPrefs.SetFloat($"PlayerPosZ_{slotId}", pos.z);
+            PlayerPrefs.Save(); //디스크에 강제 저장
+
+            Debug.Log($"슬롯 {slotId}: 현재 위치 저장 완료 - {pos}");
+            UpdateSlot(); // 버튼 활성화 갱신
+        }
+
+        public void CheckPointLoad()
+        {
+            // 저장된 위치 불러오기
+            if (PlayerPrefs.HasKey($"PlayerPosX_{slotId}"))
+            {
+                float x = PlayerPrefs.GetFloat($"PlayerPosX_{slotId}");
+                float y = PlayerPrefs.GetFloat($"PlayerPosY_{slotId}");
+                float z = PlayerPrefs.GetFloat($"PlayerPosZ_{slotId}");
+
+                playerPosition.position = new Vector3(x, y, z);
+                Debug.Log($"슬롯 {slotId}: 위치 불러오기 완료 - {playerPosition.position}");
+            }
+            else
+            {
+                Debug.Log($"슬롯 {slotId}: 저장된 위치 없음. 기본 위치 사용");
+            }
+        }
+
+        public void CheckPointRemove()
+        {
+            PlayerPrefs.DeleteKey($"PlayerPosX_{slotId}");
+            PlayerPrefs.DeleteKey($"PlayerPosY_{slotId}");
+            PlayerPrefs.DeleteKey($"PlayerPosZ_{slotId}");
+
+            Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
+            UpdateSlot();
+        }
+    }
+}
+

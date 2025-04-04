@@ -30,7 +30,7 @@ public class CameraChange : MonoBehaviour
                 c_hamster.SetActive(false);
 
                 // 플레이어 이동 입력 초기화
-                //ResetPlayerMovement();
+                ResetPlayerMovement();
 
                 break;
 
@@ -48,13 +48,8 @@ public class CameraChange : MonoBehaviour
         CameraSet.Instance.ChangeCamera(camType);
     }
 
-    //강제로 멈추기
-    //private void ResetPlayerMovement()
-    //{
-    //    var controller = hamster.GetComponent<ThirdPersonController>();
-    //    if (controller != null)
-    //    {
-    //        controller.MoveSpeed = 0; //강제로 멈추기
-    //    }
-    //}
+    private void ResetPlayerMovement()
+    {
+          
+    }
 }

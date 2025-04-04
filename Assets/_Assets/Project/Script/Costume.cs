@@ -40,8 +40,6 @@ public class Costume : MonoBehaviour
 
     public void Start()
     {
-        ResetCostume();
-
         if (PlayerPrefs.HasKey("SelectedCostume"))
         {
             int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume");

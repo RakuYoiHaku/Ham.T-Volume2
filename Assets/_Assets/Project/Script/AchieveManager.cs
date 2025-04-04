@@ -80,7 +80,7 @@ public class AchieveManager : MonoBehaviour
 
                 break;
 
-                StartCoroutine(NoticeRoutine());
+                //StartCoroutine(NoticeRoutine());
         }
 
         //해당 업적이 처음 달성 했다는 조건

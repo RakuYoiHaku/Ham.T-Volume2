@@ -89,8 +89,8 @@ public class UIManager : MonoBehaviour
         isPaused = !isPaused;
         PausePanel(isPaused);
         Time.timeScale = isPaused ? 0 : 1; // 게임 멈춤/재개
-        var playerInput = FindObjectOfType<PlayerInput>();
-        playerInput.enabled = !isPaused;
+        var hamsterController = FindObjectOfType<HamsterController2>();
+        hamsterController.enabled = !isPaused;
         PauseEvent?.Invoke(isPaused);
     }
 
@@ -115,9 +115,6 @@ public class UIManager : MonoBehaviour
             scoreText.text = nowScore.ToString();  // 점수를 UI에 업데이트
         }
     }
-
-  
-
     #endregion
 
     private void OnDisable()
