@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private static GameManager m_instance; //½Ì±ÛÅæÀÌ ÇÒ´çµÉ static º¯¼ö
 
     public float score = 0;
+    public bool isEating;
 
     private void Awake()
     {

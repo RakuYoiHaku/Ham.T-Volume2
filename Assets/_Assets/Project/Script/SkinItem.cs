@@ -11,8 +11,6 @@ public class SkinItem : MonoBehaviour
 
     Vector3 _origin;
 
-    public bool _isEating = false;
-
     private void Awake()
     {
         _origin = transform.eulerAngles;
@@ -30,7 +28,7 @@ public class SkinItem : MonoBehaviour
     {
         if (other.CompareTag("Player")) // 특정 태그의 아이템과 충돌 감지
         {
-            _isEating = true;
+            GameManager.Instance.isEating = true;
 
             //CostumeManager.Instance.AddCostume(costumeId);
 

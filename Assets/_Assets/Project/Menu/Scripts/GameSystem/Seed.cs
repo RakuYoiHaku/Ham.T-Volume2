@@ -6,8 +6,6 @@ public class Seed : MonoBehaviour
 
     Vector3 _origin;
 
-    public bool isEating;
-
     private void Awake()
     {
         _origin = transform.eulerAngles;
@@ -25,7 +23,7 @@ public class Seed : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            isEating = true;
+            GameManager.Instance.isEating = true;
             GameManager.Instance.SetScore(1f);
             seed.SetActive(false);
         }   

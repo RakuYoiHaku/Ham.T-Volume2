@@ -7,19 +7,8 @@ public class HamsterAnimator : MonoBehaviour
 {
     private Animator playerAnimator; //플레이어 캐릭터의 애니메이터
     private HamsterController2 hamsterController; // 플레이어 이동을 알려주는 컴포넌트
-    private Seed _seed;
 
-    public int seedScore;
 
-    public void Start()
-    {
-        GameObject seedObject = GameObject.Find("Seed");
-
-        if (seedObject != null) // null 체크
-        {
-            _seed = seedObject.GetComponent<Seed>(); // Seed 컴포넌트 가져오기
-        }
-    }
     public void Awake()
     {
         playerAnimator = GetComponent<Animator>();
@@ -121,10 +110,21 @@ public class HamsterAnimator : MonoBehaviour
         }
         #endregion
 
-        if (_seed.isEating)
+        #region awake
+        if (hamsterController.awake)
+        {
+            playerAnimator.SetBool("Awake", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Awake", false);
+        }
+        #endregion
+        
+        if (GameManager.Instance.isEating)
         {
             playerAnimator.SetBool("IsEating", true);
-            _seed.isEating = false;
+            GameManager.Instance.isEating = false;
         }
         else
         {
