@@ -52,6 +52,10 @@ public class UIManager : MonoBehaviour
         {
             SetupMainMenu();
         }
+        else if (currentScene == "PlayScenev2")
+        {
+            SetGameScene();
+        }
     }
 
     #region Scene UI
@@ -62,6 +66,19 @@ public class UIManager : MonoBehaviour
         foreach (var obj in UIPanelManager.Instance.uiPanels)
         {
             if (obj.name == "Main")
+            {
+                // 이름이 일치하면 true로 설정 (여기서는 gameObject의 활성화를 예시로 듬)
+                obj.SetActive(true);
+                break; // 찾았으므로 더 이상 탐색하지 않음
+            }
+        }
+    }
+
+    private void SetGameScene()
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "PlayUICanvas")
             {
                 // 이름이 일치하면 true로 설정 (여기서는 gameObject의 활성화를 예시로 듬)
                 obj.SetActive(true);

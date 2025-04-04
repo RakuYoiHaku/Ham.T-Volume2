@@ -7,7 +7,6 @@ public class Costume : MonoBehaviour
 {
     private static event Action<int> _costumeChangedEvent;
 
-
     [SerializeField] GameObject sunflowerHat;
     [SerializeField] GameObject bearHat;
     [SerializeField] GameObject chefHat;
@@ -40,11 +39,13 @@ public class Costume : MonoBehaviour
 
     public void Start()
     {
-        if (PlayerPrefs.HasKey("SelectedCostume"))
-        {
-            int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume");
-            ActiveCostume(savedCostumeId);
-        }
+        ResetCostume();
+        //if (PlayerPrefs.HasKey("SelectedCostume"))
+        //{
+        //    int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume");
+        //    Debug.Log($"저장된 코스튬 ID: {savedCostumeId}");
+        //    ActiveCostume(savedCostumeId);
+        //}
     }
 
     private void ResetCostume()

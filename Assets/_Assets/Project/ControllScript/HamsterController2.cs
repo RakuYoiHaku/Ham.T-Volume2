@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HamsterController2 : MonoBehaviour
 {
+    public bool allowInput = true;
+
     [Header("Player")]
     public float moveSpeed;
     public float rotateSpeed;
@@ -42,6 +44,8 @@ public class HamsterController2 : MonoBehaviour
     {
         if (canMove)  // canMove가 true일 때만 이동 처리
         {
+            if (!allowInput) return;
+
             if (climbing)
             {
                 HandleClimbing();

@@ -34,6 +34,9 @@ public class CostumeItem : MonoBehaviour
             _isEating = true;
 
             //CostumeManager.Instance.AddCostume(costumeId);
+
+            PlayerPrefs.SetInt($"HasCostume_{costumeId}", 1);
+            PlayerPrefs.Save();
             
             CostumeUI.Instance.UpdateBtn(costumeId);
             Debug.Log("UI°»½Å");

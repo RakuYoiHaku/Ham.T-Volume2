@@ -35,6 +35,15 @@ public class CostumeUI : MonoBehaviour
     public static void Open()
     {
         Instance.gameObject.SetActive(true);
+
+        // UI를 열 때 저장된 코스튬 정보를 다시 불러옴
+        int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume", 0);
+        int savedSkinId = PlayerPrefs.GetInt("SelectedSkined", 0);
+
+        Instance.SelectCostume(savedCostumeId);
+        Instance.SelectSkin(savedSkinId);
+
+        Debug.Log($"[코스튬 UI] 저장된 데이터 불러오기 - 코스튬: {savedCostumeId}, 스킨: {savedSkinId}");
     }
 
     /// <summary>
@@ -65,11 +74,11 @@ public class CostumeUI : MonoBehaviour
     private void Awake()
     {
         // 버튼 초기화
-        ResetButtons();
+        //ResetButtons();
     }
 
-    private void Start()
-    {
+    public void Start()
+    {   
         ResetSkinButtons(); // 스킨버튼 초기화
 
         // 저장된 코스튬 불러와 적용
@@ -81,7 +90,7 @@ public class CostumeUI : MonoBehaviour
         SelectSkin(savedSkinId);
 
         quit_btn.interactable = true;
-        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseScene());
+        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseCostumeScene());
 
         //리셋 버튼에 기능 추가
         reset_btn.onClick.AddListener(ResetToDefault);
@@ -159,7 +168,7 @@ public class CostumeUI : MonoBehaviour
         }
     }
 
-    private void SelectCostume(int costumeId)
+    public void SelectCostume(int costumeId)
     {
         Costume.Instance.ActiveCostume(0);  // 모든 코스튬 비활성화
         Costume.Instance.ActiveCostume(costumeId);
@@ -167,6 +176,10 @@ public class CostumeUI : MonoBehaviour
 
         PlayerPrefs.SetInt("SelectedCostume", selectedCostumeId);
         PlayerPrefs.Save();
+
+        // 버튼 상태 갱신
+        UpdateBtn(costumeId);
+
         Debug.Log($"코스튬 {selectedCostumeId} 저장 완료!");
     }
 
@@ -202,7 +215,7 @@ public class CostumeUI : MonoBehaviour
         }
     }
 
-    private void SelectSkin(int skinId)
+    public void SelectSkin(int skinId)
     {
         SkinChange.ActiveSkined(0);  // 모든 코스튬 비활성화
         SkinChange.ActiveSkined(skinId);

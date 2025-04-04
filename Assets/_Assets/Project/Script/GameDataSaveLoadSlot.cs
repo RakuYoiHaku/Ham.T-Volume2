@@ -56,6 +56,12 @@ namespace GameSave
             PlayerPrefs.SetFloat($"PlayerPosX_{slotId}", pos.x);
             PlayerPrefs.SetFloat($"PlayerPosY_{slotId}", pos.y);
             PlayerPrefs.SetFloat($"PlayerPosZ_{slotId}", pos.z);
+
+            // 현재 선택된 코스튬 & 스킨 ID 저장
+            PlayerPrefs.SetInt($"SelectedCostume_{slotId}", PlayerPrefs.GetInt("SelectedCostume", 0));
+            PlayerPrefs.SetInt($"SelectedSkined_{slotId}", PlayerPrefs.GetInt("SelectedSkined", 0));
+
+            PlayerPrefs.SetInt($"IsSaved_{slotId}", 1); // 저장 여부 표시
             PlayerPrefs.Save(); //디스크에 강제 저장
 
             Debug.Log($"슬롯 {slotId}: 현재 위치 저장 완료 - {pos}");
@@ -73,6 +79,15 @@ namespace GameSave
 
                 playerPosition.position = new Vector3(x, y, z);
                 Debug.Log($"슬롯 {slotId}: 위치 불러오기 완료 - {playerPosition.position}");
+
+                // 저장된 코스튬 불러와 적용
+                int savedCostumeId = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
+                int savedSkinId = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
+
+                CostumeUI.Instance.SelectCostume(savedCostumeId);
+                CostumeUI.Instance.SelectSkin(savedSkinId);
+
+                Debug.Log($"슬롯 {slotId}: 코스튬 {savedCostumeId} / 스킨 {savedSkinId} 적용 완료!");
             }
             else
             {
@@ -85,6 +100,12 @@ namespace GameSave
             PlayerPrefs.DeleteKey($"PlayerPosX_{slotId}");
             PlayerPrefs.DeleteKey($"PlayerPosY_{slotId}");
             PlayerPrefs.DeleteKey($"PlayerPosZ_{slotId}");
+
+            // 스튬 & 스킨 정보 삭제
+            PlayerPrefs.DeleteKey($"SelectedCostume_{slotId}");
+            PlayerPrefs.DeleteKey($"SelectedSkined_{slotId}");
+
+            PlayerPrefs.DeleteKey($"IsSaved_{slotId}");
 
             Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
             UpdateSlot();
