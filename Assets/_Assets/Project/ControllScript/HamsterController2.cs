@@ -30,8 +30,9 @@ public class HamsterController2 : MonoBehaviour
     public bool startClimbing; // Climbing 종료 중
     public bool climbing;
     public bool inAir;
+    public bool awake;
 
-    private bool canMove = true;  // 이동 가능 여부
+    private bool canMove = false;  // 이동 가능 여부
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
 
     public void Awake()
@@ -66,7 +67,27 @@ public class HamsterController2 : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            // 키보드 입력 감지 시 awake를 true로 설정하고, 2초 대기 후 canMove 활성화
+            if (!awake && (Input.anyKeyDown || Input.anyKey))  // 키 입력이 있을 때
+            {
+                awake = true;
+                StartCoroutine(WaitForInputAndEnableMovement(2f));  // 2초 대기 후 이동 가능하게 설정
+            }
+        }
     }
+
+    // 2초 후 canMove를 활성화하는 코루틴
+    private IEnumerator WaitForInputAndEnableMovement(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);  // 2초 대기
+        canMove = true;  // 이동 가능
+        awake = false;
+    }
+
+
+
     #region Move/Sprint/Jump
     public void HandleMove()
     {

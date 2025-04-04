@@ -19,7 +19,7 @@ public class CostumeUI : MonoBehaviour
             // 찾아봐도 없으면 새로 생성
             if (_instance == null)
             {
-                var prefab = Resources.Load<CostumeUI>("CostumeUI");
+                var prefab = Resources.Load<CostumeUI>("CostumeUInew");
                 _instance = Instantiate(prefab);
                 DontDestroyOnLoad(_instance.gameObject);
                 Close();
@@ -35,15 +35,6 @@ public class CostumeUI : MonoBehaviour
     public static void Open()
     {
         Instance.gameObject.SetActive(true);
-
-        // UI를 열 때 저장된 코스튬 정보를 다시 불러옴
-        int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume", 0);
-        int savedSkinId = PlayerPrefs.GetInt("SelectedSkined", 0);
-
-        Instance.SelectCostume(savedCostumeId);
-        Instance.SelectSkin(savedSkinId);
-
-        Debug.Log($"[코스튬 UI] 저장된 데이터 불러오기 - 코스튬: {savedCostumeId}, 스킨: {savedSkinId}");
     }
 
     /// <summary>
@@ -58,13 +49,14 @@ public class CostumeUI : MonoBehaviour
     public Button sunflowerHat_btn; // 버튼 아이콘
     public Button bearHat_btn;
     public Button chefHat_btn;
+
     public Button quit_btn;
     public Button reset_btn;
 
-    [SerializeField] Sprite nullImage;
-    [SerializeField] Sprite sunflowerHat_icon;
-    [SerializeField] Sprite bearHat_icon;
-    [SerializeField] Sprite chefHat_icon;
+    //[SerializeField] Sprite nullImage;
+    //[SerializeField] Sprite sunflowerHat_icon;
+    //[SerializeField] Sprite bearHat_icon;
+    //[SerializeField] Sprite chefHat_icon;
 
     private int selectedCostumeId = 0;
 
@@ -74,12 +66,11 @@ public class CostumeUI : MonoBehaviour
     private void Awake()
     {
         // 버튼 초기화
-        //ResetButtons();
+        ResetButtons();
     }
 
-    public void Start()
-    {   
-        ResetSkinButtons(); // 스킨버튼 초기화
+    private void Start()
+    {
 
         // 저장된 코스튬 불러와 적용
         int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume", 0);
@@ -90,7 +81,7 @@ public class CostumeUI : MonoBehaviour
         SelectSkin(savedSkinId);
 
         quit_btn.interactable = true;
-        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseCostumeScene());
+        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseScene());
 
         //리셋 버튼에 기능 추가
         reset_btn.onClick.AddListener(ResetToDefault);
@@ -101,9 +92,11 @@ public class CostumeUI : MonoBehaviour
     /// </summary>
     private void ResetButtons()
     {
-        sunflowerHat_btn.GetComponent<Image>().sprite = nullImage; // 기본 이미지로 설정
-        bearHat_btn.GetComponent<Image>().sprite = nullImage;
-        chefHat_btn.GetComponent<Image>().sprite = nullImage;
+        sunflowerHat_btn.interactable = false;
+        bearHat_btn.interactable = false;
+        chefHat_btn.interactable = false;
+        skin1_btn.interactable = false;
+        skin2_btn.interactable = false;
     }
 
     /// <summary>
@@ -157,18 +150,18 @@ public class CostumeUI : MonoBehaviour
         switch (costumeId)
         {
             case 1:
-                    sunflowerHat_btn.GetComponent<Image>().sprite = sunflowerHat_icon;
+                sunflowerHat_btn.interactable = true;  // 버튼 활성화
                 break;
             case 2:
-                    bearHat_btn.GetComponent<Image>().sprite = bearHat_icon;
+                bearHat_btn.interactable = true;  // 버튼 활성화
                 break;
             case 3:
-                    chefHat_btn.GetComponent<Image>().sprite = chefHat_icon;
+                chefHat_btn.interactable = true;  // 버튼 활성화
                 break;
         }
     }
 
-    public void SelectCostume(int costumeId)
+    private void SelectCostume(int costumeId)
     {
         Costume.Instance.ActiveCostume(0);  // 모든 코스튬 비활성화
         Costume.Instance.ActiveCostume(costumeId);
@@ -176,46 +169,41 @@ public class CostumeUI : MonoBehaviour
 
         PlayerPrefs.SetInt("SelectedCostume", selectedCostumeId);
         PlayerPrefs.Save();
-
-        // 버튼 상태 갱신
-        UpdateBtn(costumeId);
-
         Debug.Log($"코스튬 {selectedCostumeId} 저장 완료!");
     }
 
     #region SkinUI
     // 스킨UI
-    public Button skinUI_btn;
+    public Button skinUI_btn0;
+
 
     [SerializeField] Button skin1_btn;
+    [SerializeField] Button skin2_btn;
     //[SerializeField] GameObject skinPanel; 
 
     private SkinChange skinChange;
 
     private int selectedSkinId = 0;
 
-    public void ResetSkinButtons()
-    {
-        reset_btn.interactable = true; 
-    }
-
     public void SkinButton(int skinId)
     {
         switch (skinId)
         {
             case 0:
-                reset_btn.onClick.RemoveAllListeners();
-                reset_btn.onClick.AddListener(() => SelectSkin(0));
+                skin1_btn.interactable = true;
+                skin1_btn.onClick.RemoveAllListeners();
+                skin1_btn.onClick.AddListener(() => SelectSkin(0));
                 break;
             case 1:
-                skin1_btn.onClick.RemoveAllListeners();
-                skin1_btn.onClick.AddListener(() => SelectSkin(1));
+                skin2_btn.interactable = true;
+                skin2_btn.onClick.RemoveAllListeners();
+                skin2_btn.onClick.AddListener(() => SelectSkin(1));
                 Debug.Log("스킨1 변경");
                 break;
         }
     }
 
-    public void SelectSkin(int skinId)
+    private void SelectSkin(int skinId)
     {
         SkinChange.ActiveSkined(0);  // 모든 코스튬 비활성화
         SkinChange.ActiveSkined(skinId);
