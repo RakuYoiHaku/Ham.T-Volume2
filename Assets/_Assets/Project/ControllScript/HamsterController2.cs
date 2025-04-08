@@ -6,6 +6,8 @@ public class HamsterController2 : MonoBehaviour
 {
     public bool allowInput = true;
 
+    [SerializeField] float raycastDist = 0.1f;
+
     [Header("Player")]
     public float moveSpeed;
     public float rotateSpeed;
@@ -31,6 +33,7 @@ public class HamsterController2 : MonoBehaviour
     public bool climbing;
     public bool inAir;
     public bool awake;
+    //public bool isGrounded;
 
     private bool canMove = false;  // 이동 가능 여부
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
@@ -76,6 +79,23 @@ public class HamsterController2 : MonoBehaviour
                 StartCoroutine(WaitForInputAndEnableMovement(2f));  // 2초 대기 후 이동 가능하게 설정
             }
         }
+    }
+
+    void Update()
+    {
+        // 바닥에 닿지 않으면 inAir를 true로 설정
+        //if (inAir == false && IsGrounded() == false)
+        //{
+        //    inAir = true;
+        //}
+
+        inAir = !IsGrounded();
+    }
+
+    bool IsGrounded()
+    {
+        // 아래로 레이캐스트를 쏴서 바닥에 닿았는지 체크
+        return Physics.Raycast(transform.position, Vector3.down, raycastDist); // 작은 거리로 바닥 체크
     }
 
     // 2초 후 canMove를 활성화하는 코루틴
@@ -143,6 +163,7 @@ public class HamsterController2 : MonoBehaviour
 
         _rigidbody.AddForce(transform.up * jumpPower * 100f);
         isJumping = true;
+        //inAir = true;
     }
     #endregion
 
@@ -154,12 +175,14 @@ public class HamsterController2 : MonoBehaviour
             isJumping = false;
             _rigidbody.useGravity = true;
 
-            inAir = false;
+            //inAir = false;
+            //isGrounded =true;
         }
-        else if (collision.collider.CompareTag("Wall"))
+        else if (collision.collider.CompareTag("Curtain"))
         {
             isNearObject = true;
-            inAir = false;
+            //inAir = false;
+            //isGrounded = true;
         }
         else if (collision.collider.CompareTag("Stop"))
         {
@@ -167,20 +190,22 @@ public class HamsterController2 : MonoBehaviour
             ClimbingStop();
             _rigidbody.useGravity = true;
         }
+
     }
 
     public void OnCollisionExit(Collision collision)
     {
         if (collision.collider.CompareTag("Ground"))
         {
-            inAir = true;
+            //inAir = true;
+            //isGrounded = false;
         }
-        else if (collision.collider.CompareTag("Wall"))
+        else if (collision.collider.CompareTag("Curtain"))
         {
             isNearObject = false;
             isClimbing = false;
             startClimbing = false;
-            inAir = true;
+            //inAir = true;
         }
         else if (collision.collider.CompareTag("Stop"))
         {
