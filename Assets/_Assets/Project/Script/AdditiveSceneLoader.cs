@@ -9,6 +9,7 @@ public class AdditiveSceneLoader : MonoBehaviour
 {
     private static AdditiveSceneLoader _instance;
     private HamsterController2 _player;
+    //private HamsterController2 _costumescenePlayer;
     [SerializeField] GameObject _playUICanvas;
 
     public static AdditiveSceneLoader Instance
@@ -58,10 +59,7 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             SceneManager.LoadScene("CostumeScene", LoadSceneMode.Additive);
             _playUICanvas.gameObject.SetActive(false);
-            if (_player != null)
-            {
-                _player.allowInput = false; // 입력 정지
-            }
+            PlayerInputControll(true);
             Debug.Log("CostumeScene을 Additive 모드로 로드함 + player 입력 차단");
         }
     }
@@ -72,10 +70,7 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             SceneManager.UnloadSceneAsync("CostumeScene");
             _playUICanvas.gameObject.SetActive(true);
-            if (_player != null)
-            {
-                _player.allowInput = true; // 다시 입력 허용
-            }
+            PlayerInputControll(false);
             Debug.Log("CostumeScene 언로드 요청 + player 입력 허용");
         }
     }
@@ -87,10 +82,7 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             SceneManager.LoadScene("MiniGameScene", LoadSceneMode.Additive);
             _playUICanvas.gameObject.SetActive(false);
-            if (_player != null)
-            {
-                _player.allowInput = false; // 입력 정지
-            }
+            PlayerInputControll(true);
             Debug.Log("CostumeScene을 Additive 모드로 로드함 + player 입력 차단");
         }
     }
@@ -101,11 +93,28 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             SceneManager.UnloadSceneAsync("MiniGameScene");
             _playUICanvas.gameObject.SetActive(true);
+            PlayerInputControll(false);
+            Debug.Log("CostumeScene 언로드 요청 + player 입력 허용");
+        }
+    }
+
+    public void PlayerInputControll(bool state)
+    {
+        if(state == true)
+        {
             if (_player != null)
             {
+                //_costumescenePlayer.allowInput = false;
+                _player.allowInput = false; // 입력 정지
+            }
+        }
+        else
+        {
+            if (_player != null)
+            {
+                //_costumescenePlayer.allowInput = true;
                 _player.allowInput = true; // 다시 입력 허용
             }
-            Debug.Log("CostumeScene 언로드 요청 + player 입력 허용");
         }
     }
 }

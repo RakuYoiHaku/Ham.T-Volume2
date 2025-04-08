@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class CostumeScene : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private HamsterController2 _player;
     void Start()
     {
         CostumeUI.Open();
+        _player = FindObjectOfType<HamsterController2>();
+        if (_player != null)
+        {
+            //_costumescenePlayer.allowInput = false;
+            _player.allowInput = false; // 입력 정지
+        }
+        CursorManager.Instance.SetCursorVisable(true);
     }
 
     private void OnDestroy()

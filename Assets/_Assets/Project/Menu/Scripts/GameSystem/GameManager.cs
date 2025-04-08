@@ -35,14 +35,14 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //UIManager.Instance.ScoreUI(0);
+        UIManager.Instance.ScoreUI(0);
     }
     //점수를 증가시킴
     public void SetScore(float newScore)
     {
         score += newScore;
-        //UIManager.Instance.ScoreUI(score);
-        //AudioManager.Instance.PlaySound(SoundType.Eat);
+        UIManager.Instance.ScoreUI(newScore);
+        AudioManager.Instance.PlaySound(SoundType.Eat);
     }
 
     //현재 점수를 반환함

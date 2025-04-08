@@ -123,7 +123,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ScoreUI(int nowScore)
+    public void ScoreUI(float nowScore)
     {
         GameObject _scoreText = GameObject.Find("ScoreText"); // TMP_Text 컴포넌트 가져오기
         TextMeshProUGUI scoreText = _scoreText.GetComponent<TextMeshProUGUI>();

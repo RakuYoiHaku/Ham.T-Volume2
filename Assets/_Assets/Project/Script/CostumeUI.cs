@@ -67,9 +67,10 @@ public class CostumeUI : MonoBehaviour
     {
         // 버튼 초기화
         ResetButtons();
+        SkinButton(0);
     }
 
-    private void Start()
+    private void OnEnable()
     {
 
         // 저장된 코스튬 불러와 적용
@@ -80,8 +81,17 @@ public class CostumeUI : MonoBehaviour
         int savedSkinId = PlayerPrefs.GetInt("SelectedSkined", 0);
         SelectSkin(savedSkinId);
 
+        // 코스튬 보유 여부에 따라 버튼 활성화
+        for(int i = 1; i <= 3; i++)
+        {
+            if (PlayerPrefs.GetInt($"HasCostume_{i}", 0) == 1)
+            {
+                UpdateBtn(i);
+            }
+        }
+
         quit_btn.interactable = true;
-        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseScene());
+        quit_btn.onClick.AddListener(() => AdditiveSceneLoader.Instance.CloseCostumeScene());
 
         //리셋 버튼에 기능 추가
         reset_btn.onClick.AddListener(ResetToDefault);
@@ -161,7 +171,7 @@ public class CostumeUI : MonoBehaviour
         }
     }
 
-    private void SelectCostume(int costumeId)
+    public void SelectCostume(int costumeId)
     {
         Costume.Instance.ActiveCostume(0);  // 모든 코스튬 비활성화
         Costume.Instance.ActiveCostume(costumeId);
@@ -203,7 +213,7 @@ public class CostumeUI : MonoBehaviour
         }
     }
 
-    private void SelectSkin(int skinId)
+    public void SelectSkin(int skinId)
     {
         SkinChange.ActiveSkined(0);  // 모든 코스튬 비활성화
         SkinChange.ActiveSkined(skinId);

@@ -1,3 +1,4 @@
+using GameSave;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,13 +40,20 @@ public class Costume : MonoBehaviour
 
     public void Start()
     {
+        // 항상 처음엔 기본 코스튬으로 초기화
         ResetCostume();
-        //if (PlayerPrefs.HasKey("SelectedCostume"))
-        //{
-        //    int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume");
-        //    Debug.Log($"저장된 코스튬 ID: {savedCostumeId}");
-        //    ActiveCostume(savedCostumeId);
-        //}
+
+        if (PlayerPrefs.HasKey("SelectedCostume"))
+        {
+            int savedCostumeId = PlayerPrefs.GetInt("SelectedCostume");
+            Debug.Log($"저장된 코스튬 ID: {savedCostumeId}");
+            ActiveCostume(savedCostumeId);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("SelectedCostume", 0); // 기본값 저장
+            PlayerPrefs.Save();
+        }
     }
 
     private void ResetCostume()

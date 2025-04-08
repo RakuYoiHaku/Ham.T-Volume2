@@ -24,6 +24,6 @@ public class GameUICanvas : MonoBehaviour
 
     private void OnDisable()
     {
-        CursorManager.Instance.SetCursorVisable(false);
+        //CursorManager.Instance.SetCursorVisable(false);
     }
 }

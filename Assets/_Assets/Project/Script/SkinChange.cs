@@ -29,12 +29,19 @@ public class SkinChange : MonoBehaviour
 
     public void Start()
     {
-        ResetSkin();
+        ResetSkin();  // 기본 스킨으로 초기화
 
         if (PlayerPrefs.HasKey("SelectedSkined"))
         {
             int savedSkinId = PlayerPrefs.GetInt("SelectedSkined");
             ActiveSkined(savedSkinId);
+        }
+        else
+        {
+            // 기본값으로 초기화
+            PlayerPrefs.SetInt("SelectedSkined", 0);
+            PlayerPrefs.Save();
+            ActiveSkined(0);
         }
     }
     private void ResetSkin()

@@ -64,6 +64,13 @@ namespace GameSave
             PlayerPrefs.SetInt($"IsSaved_{slotId}", 1); // 저장 여부 표시
             PlayerPrefs.Save(); //디스크에 강제 저장
 
+            // 코스튬 UI 저장
+            for (int i = 1; i <= 3; i++)
+            {
+                int hasCostume = PlayerPrefs.GetInt($"HasCostume_{i}", 0);
+                PlayerPrefs.SetInt($"Slot{slotId}_HasCostume_{i}", hasCostume);
+            }
+
             Debug.Log($"슬롯 {slotId}: 현재 위치 저장 완료 - {pos}");
             UpdateSlot(); // 버튼 활성화 갱신
         }
@@ -84,8 +91,23 @@ namespace GameSave
                 int savedCostumeId = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
                 int savedSkinId = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
 
+                // 코스튬 UI 갱신
+                for (int i = 1; i <= 3; i++)
+                {
+                    int hasCostume = PlayerPrefs.GetInt($"Slot{slotId}_HasCostume_{i}", 0);
+                    PlayerPrefs.SetInt($"HasCostume_{i}", hasCostume);
+
+                    if (hasCostume == 1)
+                    {
+                        CostumeUI.Instance.UpdateBtn(i);
+                    }
+                }
+
                 CostumeUI.Instance.SelectCostume(savedCostumeId);
                 CostumeUI.Instance.SelectSkin(savedSkinId);
+
+                // CostumeItem 제거 로직 추가
+                RemoveCollectedCostumeItems();
 
                 Debug.Log($"슬롯 {slotId}: 코스튬 {savedCostumeId} / 스킨 {savedSkinId} 적용 완료!");
             }
@@ -107,8 +129,30 @@ namespace GameSave
 
             PlayerPrefs.DeleteKey($"IsSaved_{slotId}");
 
+            PlayerPrefs.DeleteKey($"HasCostume_{slotId}");
+
             Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
             UpdateSlot();
+        }
+
+        private void RemoveCollectedCostumeItems()
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                if (PlayerPrefs.GetInt($"HasCostume_{i}", 0) == 1)
+                {
+                    // 씬에 있는 모든 CostumeItem을 검색
+                    var items = FindObjectsOfType<CostumeItem>();
+                    foreach (var item in items)
+                    {
+                        if (item.costumeId == i)
+                        {
+                            Destroy(item.gameObject);
+                            Debug.Log($"CostumeItem {i} 이미 보유 중 → 제거");
+                        }
+                    }
+                }
+            }
         }
     }
 }
