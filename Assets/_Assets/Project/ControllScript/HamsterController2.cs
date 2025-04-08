@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class HamsterController2 : MonoBehaviour
@@ -10,7 +9,7 @@ public class HamsterController2 : MonoBehaviour
 
     [Header("Player")]
     public float moveSpeed;
-    public float rotateSpeed;
+    public float rotateSpeed ;
     public float sprintSpeed;
     public float jumpPower;
 
@@ -23,6 +22,7 @@ public class HamsterController2 : MonoBehaviour
     private float _frontInput; // frontinput 값
     private Rigidbody _rigidbody;
 
+    [Header("Animation")]
     // 애니메이션 참조를 위한 bool값
     public bool isSprint; // Sprint 여부
     public bool isJumping; // 점프 여부
@@ -35,7 +35,8 @@ public class HamsterController2 : MonoBehaviour
     public bool awake;
     //public bool isGrounded;
 
-    private bool canMove = false;  // 이동 가능 여부
+    [Header ("-------------------------------------------------------")]
+    public bool canMove = false;  // 이동 가능 여부
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
 
     public void Awake()
@@ -66,7 +67,7 @@ public class HamsterController2 : MonoBehaviour
                 {
 
                     startClimbing = true;
-                    StartCoroutine(WaitStart(0.5f));  // 1초 대기 후 클라이밍 시작
+                    StartCoroutine(WaitStart(0.1f));  // 1초 대기 후 클라이밍 시작
                 }
             }
         }
@@ -83,12 +84,6 @@ public class HamsterController2 : MonoBehaviour
 
     void Update()
     {
-        // 바닥에 닿지 않으면 inAir를 true로 설정
-        //if (inAir == false && IsGrounded() == false)
-        //{
-        //    inAir = true;
-        //}
-
         inAir = !IsGrounded();
     }
 
@@ -109,37 +104,53 @@ public class HamsterController2 : MonoBehaviour
 
 
     #region Move/Sprint/Jump
-    public void HandleMove()
+   public void HandleMove()
+{
+    if (!climbing)
     {
-        if (!climbing)
+        isClimbing = false;
+        _frontInput = Input.GetAxis("Vertical");  // 상하 방향 입력 (W, S 또는 위, 아래 방향 키)
+        float horizontalInput = Input.GetAxis("Horizontal");  // 좌우 방향 입력 (A, D 또는 왼쪽, 오른쪽 방향 키)
+
+        if (_frontInput == 0 && horizontalInput == 0) // 상하와 좌우 입력이 모두 없으면 걷는 상태를 해제
         {
-            isClimbing = false;
-            _frontInput = Input.GetAxis("Vertical");
-
-
-            if (_frontInput == 0)
-            {
-                isWalking = false;
-                return;
-            }
-
-            float realMoveSpeed = isSprint ? sprintSpeed : moveSpeed;
-            //sprint = sprintSpeed/ !sprint = moveSpeed
-            // 벽을 타고 있을 때는 카메라 회전 안 함
-
-            Vector3 forward = _camera.transform.forward;
-            forward.y = 0f;
-            forward.Normalize();
-            // 카메라의 방향에 맞춰 플레이어가 회전
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(forward),
-                Time.deltaTime * rotateSpeed / 10f);
-
-            Vector3 position = transform.position + forward * _frontInput * Time.deltaTime * realMoveSpeed;
-
-            _rigidbody.MovePosition(position);
-            isWalking = true;
+            isWalking = false;
+            return;
         }
+
+        float realMoveSpeed = isSprint ? sprintSpeed : moveSpeed;
+
+        // 카메라의 방향에 맞춰 플레이어가 회전 (앞 방향으로 이동)
+        Vector3 forward = _camera.transform.forward;
+        forward.y = 0f;  // y 방향은 무시
+        forward.Normalize();  // 벡터를 단위 벡터로 정규화
+
+        // 카메라의 오른쪽 방향 벡터 계산 (플레이어가 카메라를 기준으로 좌우로 이동하도록)
+        Vector3 right = _camera.transform.right;
+        right.y = 0f;  // y 방향은 무시
+        right.Normalize();  // 벡터를 단위 벡터로 정규화
+
+        // 플레이어의 이동 방향 계산 (상하 + 좌우)
+        Vector3 moveDirection = forward * _frontInput + right * horizontalInput;
+        moveDirection.Normalize();  // 방향 벡터를 정규화하여 속도 일관성 유지
+
+        // 회전 처리 (플레이어가 이동 방향으로 자연스럽게 회전)
+        if (moveDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(moveDirection),
+                Time.deltaTime * rotateSpeed / 10f);
+        }
+
+        // 실제 이동 처리
+        Vector3 position = transform.position + moveDirection * Time.deltaTime * realMoveSpeed;
+        _rigidbody.MovePosition(position);
+
+        isWalking = true;
     }
+}
+
+
+
 
     public void HandleSprint()
     {

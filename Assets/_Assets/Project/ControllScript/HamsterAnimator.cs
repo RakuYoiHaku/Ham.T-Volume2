@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -123,8 +124,10 @@ public class HamsterAnimator : MonoBehaviour
         
         if (GameManager.Instance.isEating)
         {
+            hamsterController.canMove = false;
             playerAnimator.SetBool("IsEating", true);
             GameManager.Instance.isEating = false;
+            StartCoroutine(Wait(1.5f));
         }
         else
         {
@@ -134,5 +137,11 @@ public class HamsterAnimator : MonoBehaviour
 
         playerAnimator.SetFloat("CollectSeed", GameManager.Instance.score);
 
+    }
+
+    private IEnumerator Wait(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);  // 2초 대기
+        hamsterController.canMove = true;  // 이동 가능
     }
 }
