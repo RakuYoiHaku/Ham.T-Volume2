@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -26,6 +22,7 @@ namespace GameSave
         [SerializeField] private Button remove_btn;
 
         [SerializeField] private Transform playerPosition;
+        [SerializeField] private TMP_Text saveTimeText;
 
         private void Awake()
         {
@@ -38,19 +35,30 @@ namespace GameSave
             save_btn.onClick.AddListener(CheckPointSave);
             load_btn.onClick.AddListener(CheckPointLoad);
             remove_btn.onClick.AddListener(CheckPointRemove);
+
+            // 게임 씬 진입 시 자동 로드 처리
+            int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
+            if (selectedSlot == slotId && PlayerPrefs.HasKey($"PlayerPosX_{slotId}"))
+            {
+                CheckPointLoad();
+            }
         }
 
         public void UpdateSlot()
         {
-            //슬롯 번호에 해당하는 세이브 파일이 있으면 버튼 활성화
             bool hasSave = PlayerPrefs.HasKey($"PlayerPosX_{slotId}");
-
             load_btn.interactable = hasSave;
             remove_btn.interactable = hasSave;
+
+            // UI 쪽에서 PlayerPrefs를 직접 확인하여 표시하도록 유도
         }
 
         public void CheckPointSave()
         {
+            // 현재 날짜와 시간 저장
+            string saveTime = DateTime.Now.ToString("yyyy.MM.dd HH:mm");
+            PlayerPrefs.SetString($"SaveTime_{slotId}", saveTime);
+
             Vector3 pos = playerPosition.position;
 
             PlayerPrefs.SetFloat($"PlayerPosX_{slotId}", pos.x);
@@ -62,16 +70,19 @@ namespace GameSave
             PlayerPrefs.SetInt($"SelectedSkined_{slotId}", PlayerPrefs.GetInt("SelectedSkined", 0));
 
             PlayerPrefs.SetInt($"IsSaved_{slotId}", 1); // 저장 여부 표시
-            PlayerPrefs.Save(); //디스크에 강제 저장
 
-            // 코스튬 UI 저장
+            // 코스튬/스킨 UI 저장
             for (int i = 1; i <= 3; i++)
             {
                 int hasCostume = PlayerPrefs.GetInt($"HasCostume_{i}", 0);
                 PlayerPrefs.SetInt($"Slot{slotId}_HasCostume_{i}", hasCostume);
+
+                int hasSkin = PlayerPrefs.GetInt($"HasSkin_{i}", 0);
+                PlayerPrefs.SetInt($"Slot{slotId}_HasSkin_{i}", hasSkin);
             }
 
             Debug.Log($"슬롯 {slotId}: 현재 위치 저장 완료 - {pos}");
+            PlayerPrefs.Save(); //디스크에 강제 저장
             UpdateSlot(); // 버튼 활성화 갱신
         }
 
@@ -90,6 +101,10 @@ namespace GameSave
                 // 저장된 코스튬 불러와 적용
                 int savedCostumeId = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
                 int savedSkinId = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
+
+                // 저장된 시간 표시
+                string savedTime = PlayerPrefs.GetString($"SaveTime_{slotId}");
+                Debug.Log($"슬롯 {slotId}의 저장 시간: {savedTime}");
 
                 // 코스튬 UI 갱신
                 for (int i = 1; i <= 3; i++)
@@ -130,6 +145,7 @@ namespace GameSave
             PlayerPrefs.DeleteKey($"IsSaved_{slotId}");
 
             PlayerPrefs.DeleteKey($"HasCostume_{slotId}");
+            PlayerPrefs.DeleteKey($"SaveTime_{slotId}");
 
             Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
             UpdateSlot();

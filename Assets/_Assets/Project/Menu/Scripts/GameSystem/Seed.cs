@@ -25,7 +25,9 @@ public class Seed : MonoBehaviour
         {
             GameManager.Instance.isEating = true;
             GameManager.Instance.SetScore(1f);
-            Destroy(gameObject);
+
+            Debug.Log("스코어 증가");
+            seed.SetActive(false);
         }   
     }
 }

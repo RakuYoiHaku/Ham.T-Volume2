@@ -6,6 +6,7 @@ using static UnityEngine.InputManagerEntry;
 public class CostumeItem : MonoBehaviour
 {
     public int costumeId;
+    public string itemName;
 
     [SerializeField] private float rotationSpeed = 450f;
     [SerializeField] GameObject costumitem;
@@ -38,8 +39,10 @@ public class CostumeItem : MonoBehaviour
             
             CostumeUI.Instance.UpdateBtn(costumeId);
             Debug.Log("UI갱신");
+            UIManager.Instance.ShowNoticeByAnimator($"Get {itemName}!", 2f);
 
             Destroy(this.gameObject); // 아이템 제거
+            
         }
     }
 }

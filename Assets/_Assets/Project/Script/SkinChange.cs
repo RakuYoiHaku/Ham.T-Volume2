@@ -51,6 +51,12 @@ public class SkinChange : MonoBehaviour
 
     public void OnSkinChanged(int skinId)
     {
+        //if (bodyRenderer == null)
+        //{
+        //    print($"OBJ : {gameObject.name} SCENE : {gameObject.scene.name}");
+        //    return;
+        //}
+
         switch (skinId)
         {
             case 0:

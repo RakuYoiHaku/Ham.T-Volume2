@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -132,6 +133,35 @@ public class UIManager : MonoBehaviour
             scoreText.text = nowScore.ToString();  // 점수를 UI에 업데이트
         }
     }
+
+    #endregion
+
+    #region NocticeANimation
+
+    public void ShowNoticeByAnimator(string message, float duration)
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "Notice")
+            {
+                var text = obj.GetComponentInChildren<TextMeshProUGUI>();
+                var anim = obj.GetComponent<Animator>();
+
+                if (text != null && anim != null)
+                {
+                    obj.SetActive(true); // 꺼져 있으면 켜줌
+                    text.text = message;
+                    anim.SetTrigger("NoticeShow");
+                }
+                break;
+            }
+        }
+    }
+    private IEnumerator HideNoticeAfterDelay(GameObject noticeobj, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay); // 타임 스케일 멈춰도 보임
+    }
+
     #endregion
 
     private void OnDisable()
