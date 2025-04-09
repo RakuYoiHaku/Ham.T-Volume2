@@ -6,7 +6,7 @@ public class HamsterController2 : MonoBehaviour
 {
     public bool allowInput = true;
 
-    [SerializeField] float raycastDist = 0.1f;
+    [SerializeField] float raycastDist = 0.01f;
 
     [Header("Player")]
     public float moveSpeed;
